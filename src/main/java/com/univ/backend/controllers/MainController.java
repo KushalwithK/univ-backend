@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin()
 @RestController
 @RequestMapping("/api/v1")
 
@@ -22,12 +21,13 @@ public class MainController {
         return "Hello world!";
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/team")
-
     public AdminPostRequestResponse<TeamEntity> postTeamDetails(@RequestBody TeamEntity teamDetails) {
         return service.addTeam(teamDetails);
     }
 
+    @CrossOrigin(origins = "*")
     @GetMapping("/team")
     public List<TeamEntity> getTeamDetails(@RequestParam(name = "url", required = false) String url) {
         if (url == null) {
