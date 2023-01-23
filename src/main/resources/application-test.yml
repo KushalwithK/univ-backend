@@ -1,0 +1,14 @@
+spring:
+  config:
+    activate:
+      on-profile:
+        - test
+  datasource:
+    url: "jdbc:mysql://containers-us-west-31.railway.app:7577/railway"
+    username: root
+    password: NBz8XfrBH8zC57OE4Xc0
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
