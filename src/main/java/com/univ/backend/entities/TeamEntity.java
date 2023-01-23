@@ -10,6 +10,7 @@ public class TeamEntity {
     public Long id;
     public String name;
     public String role;
+    public String info;
     public String image;
     public String url;
 }
