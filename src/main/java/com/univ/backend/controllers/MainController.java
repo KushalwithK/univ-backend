@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin()
 @RestController
 @RequestMapping("/api/v1")
+
 public class MainController {
 
     @Autowired
@@ -21,6 +23,7 @@ public class MainController {
     }
 
     @PostMapping("/team")
+
     public AdminPostRequestResponse<TeamEntity> postTeamDetails(@RequestBody TeamEntity teamDetails) {
         return service.addTeam(teamDetails);
     }
