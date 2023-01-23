@@ -1,7 +1,9 @@
 package com.univ.backend.controllers;
 
 import com.univ.backend.entities.TeamEntity;
-import com.univ.backend.response.AdminPostRequestResponse;
+import com.univ.backend.exceptions.MandatoryFieldFoundEmptyException;
+import com.univ.backend.exceptions.TeamMemberNotFoundException;
+import com.univ.backend.response.TeamPostRequestResponse;
 import com.univ.backend.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +25,13 @@ public class MainController {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/team")
-    public AdminPostRequestResponse<TeamEntity> postTeamDetails(@RequestBody TeamEntity teamDetails) {
+    public TeamPostRequestResponse postTeamDetails(@RequestBody TeamEntity teamDetails) throws MandatoryFieldFoundEmptyException {
         return service.addTeam(teamDetails);
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping("/team")
-    public List<TeamEntity> getTeamDetails(@RequestParam(name = "url", required = false) String url) {
+    public List<TeamEntity> getTeamDetails(@RequestParam(name = "url", required = false) String url) throws TeamMemberNotFoundException {
         if (url == null) {
             return service.getTeams();
         }

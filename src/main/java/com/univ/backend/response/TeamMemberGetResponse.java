@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class AdminPostRequestResponse<T> {
-    public Integer status;
-    public T data;
+public class TeamMemberGetResponse {
+    private HttpStatus status;
+    private String message;
+    private Long timeStamp;
 }

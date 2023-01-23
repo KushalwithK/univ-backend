@@ -11,7 +11,7 @@ public class Admin {
             allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "admin_id_sequence")
-    public Long id;
+    private Long id;
 
-    public String name;
+    private String name;
 }
