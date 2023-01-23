@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatus;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamPostRequestResponse {
+public class TeamMemberUpdateResponse {
     private HttpStatus status;
-    private TeamEntity data;
+    private TeamEntity updatedResponse;
     private String message;
     private Long timeStamp;
 }
