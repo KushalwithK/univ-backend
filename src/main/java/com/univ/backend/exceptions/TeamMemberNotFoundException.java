@@ -1,6 +1,6 @@
 package com.univ.backend.exceptions;
 
-public class TeamMemberNotFoundException extends Exception{
+public class TeamMemberNotFoundException extends Exception {
     public TeamMemberNotFoundException() {
         super();
     }

@@ -1,5 +1,6 @@
 package com.univ.backend.exceptions;
 
+import com.univ.backend.response.SponsorGetRequestResponse;
 import com.univ.backend.response.TeamMemberGetResponse;
 import com.univ.backend.response.TeamPutRequestResponse;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,18 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
                         Calendar.getInstance().getTime().getTime()
                 );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response);
+    }
+
+    @ExceptionHandler(SponsorNotFoundException.class)
+    public ResponseEntity<SponsorGetRequestResponse> sponsorNotFoundException(SponsorNotFoundException exception, WebRequest request) {
+        SponsorGetRequestResponse response =
+                new SponsorGetRequestResponse(
+                        HttpStatus.NOT_FOUND,
+                        exception.getMessage(),
+                        Calendar.getInstance().getTime().getTime()
+                );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(response);
     }
 }
