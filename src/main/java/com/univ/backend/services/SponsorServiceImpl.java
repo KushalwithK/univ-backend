@@ -1,17 +1,19 @@
 package com.univ.backend.services;
 
+import com.univ.backend.constants.Constant;
 import com.univ.backend.entities.Sponsor;
-import com.univ.backend.entities.TeamEntity;
+import com.univ.backend.exceptions.ImageFormatException;
 import com.univ.backend.exceptions.MandatoryFieldFoundEmptyException;
 import com.univ.backend.exceptions.SponsorNotFoundException;
-import com.univ.backend.exceptions.TeamMemberNotFoundException;
+import com.univ.backend.models.ImageData;
 import com.univ.backend.repositories.SponsorRepository;
 import com.univ.backend.response.SponsorPostRequestResponse;
-import com.univ.backend.response.SponsorUpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +23,14 @@ public class SponsorServiceImpl implements SponsorService {
 
     @Autowired
     private SponsorRepository repository;
+
+    @Autowired
+    private FileService fileService;
     @Override
-    public SponsorPostRequestResponse addSponsor(Sponsor sponsor) throws MandatoryFieldFoundEmptyException {
-        if (sponsor.getImage() != null && sponsor.getName() != null && sponsor.getDetails() != null) {
+    public SponsorPostRequestResponse addSponsor(Sponsor sponsor, MultipartFile image) throws MandatoryFieldFoundEmptyException, IOException, ImageFormatException {
+        if (image != null && sponsor.getName() != null && sponsor.getDetails() != null) {
+            ImageData imageData = fileService.uploadImage(Constant.IMAGE_BASE_URL, image);
+            sponsor.setImage(imageData);
             Sponsor saved = repository.save(sponsor);
             return new SponsorPostRequestResponse(
                     HttpStatus.OK,
@@ -32,7 +39,7 @@ public class SponsorServiceImpl implements SponsorService {
                     Calendar.getInstance().getTimeInMillis()
             );
         }
-        throw new MandatoryFieldFoundEmptyException("Mandatory fields must be filled!");
+        throw new MandatoryFieldFoundEmptyException("Mandatory fields ( name, details and image ) must be filled!");
     }
 
     @Override
@@ -49,6 +56,7 @@ public class SponsorServiceImpl implements SponsorService {
         throw new SponsorNotFoundException("No Sponsor with name " + name + " was found in database!");
     }
 
+    // To be changed
     @Override
     public Sponsor updateSponsorByName(String name, Sponsor sponsorModel) throws SponsorNotFoundException {
         Optional<Sponsor> optionalSponsor = repository.findByName(name);
@@ -59,7 +67,7 @@ public class SponsorServiceImpl implements SponsorService {
         if(sponsorModel.getName() != null && !"".equalsIgnoreCase(sponsorModel.getName())) {
             sponsor.setName(sponsorModel.getName());
         }
-        if(sponsorModel.getImage() != null && !"".equalsIgnoreCase(sponsorModel.getImage())) {
+        if(sponsorModel.getImage() != null && !"".equalsIgnoreCase(sponsorModel.getImage().getPath())) {
             sponsor.setImage(sponsorModel.getImage());
         }
         if(sponsorModel.getDetails() != null && !"".equalsIgnoreCase(sponsorModel.getDetails())) {

@@ -1,8 +1,6 @@
 package com.univ.backend.exceptions;
 
-import com.univ.backend.response.SponsorGetRequestResponse;
-import com.univ.backend.response.TeamMemberGetResponse;
-import com.univ.backend.response.TeamPutRequestResponse;
+import com.univ.backend.response.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -51,6 +49,27 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
                         Calendar.getInstance().getTime().getTime()
                 );
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
+    @ExceptionHandler(UnexpectedServerErrorOccurredException.class)
+    public ResponseEntity<UnexpectedServerErrorResponse> unexpectedServerErrorOccurred(UnexpectedServerErrorOccurredException exception, WebRequest request) {
+        UnexpectedServerErrorResponse response =
+                new UnexpectedServerErrorResponse(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        exception.getMessage(),
+                        request.getContextPath(),
+                        Calendar.getInstance().getTime().getTime()
+                );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
+    @ExceptionHandler(ImageFormatException.class)
+    public ResponseEntity<ImageFormatResponse> imageFormatExceptionHandlers(ImageFormatException exception, WebRequest request) {
+        ImageFormatResponse response =
+                new ImageFormatResponse(HttpStatus.BAD_REQUEST, exception.getMessage(), Calendar.getInstance().getTime().getTime());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }
 }
