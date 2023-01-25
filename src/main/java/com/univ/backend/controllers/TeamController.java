@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "localhost:5173")
 public class TeamController {
 
     @Autowired
@@ -27,13 +27,12 @@ public class TeamController {
         return "Hello world!";
     }
 
-    @CrossOrigin(origins = "*")
+
     @PostMapping("/team")
     public TeamPutRequestResponse postTeamDetails(@RequestBody TeamEntity teamDetails) throws MandatoryFieldFoundEmptyException {
         return service.addTeam(teamDetails);
     }
 
-    @CrossOrigin(origins = "*")
     @GetMapping("/team")
     public List<TeamEntity> getTeamDetails(@RequestParam(name = "url", required = false) String url) throws TeamMemberNotFoundException {
         if (url == null) {

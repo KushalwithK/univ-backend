@@ -35,12 +35,14 @@ public class SponsorController {
         return service.getSponsorByName(name);
     }
 
+    @CrossOrigin(origins = "*")
     @PutMapping("/sponsor/{name}")
     public SponsorUpdateResponse sponsorPutRequest(@PathVariable(name = "name") String name, @RequestBody Sponsor sponsorModel) throws SponsorNotFoundException {
         Sponsor sponsor = service.updateSponsorByName(name, sponsorModel);
         return new SponsorUpdateResponse(HttpStatus.OK, sponsor, "Sponsor was updated successfully!", Calendar.getInstance().getTime().getTime());
     }
 
+    @CrossOrigin(origins = "*")
     @DeleteMapping("/sponsor/{name}")
     public SponsorDeleteRequestResponse sponsorDeleteRequest(@PathVariable(name = "name") String name) throws SponsorNotFoundException {
         Sponsor deletedSponsor = service.deleteSponsorByName(name);
