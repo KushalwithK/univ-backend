@@ -22,12 +22,6 @@ public class TeamController {
     @Autowired
     public TeamService service;
 
-    @GetMapping("/")
-    public String initialEndpoint() {
-        return "Hello world!";
-    }
-
-
     @PostMapping("/team")
     public TeamPutRequestResponse postTeamDetails(@RequestBody TeamEntity teamDetails) throws MandatoryFieldFoundEmptyException {
         return service.addTeam(teamDetails);
