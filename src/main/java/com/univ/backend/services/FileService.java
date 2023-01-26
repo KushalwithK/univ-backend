@@ -11,6 +11,7 @@ import java.io.InputStream;
 public interface FileService {
 
     ImageData uploadImage(String path, MultipartFile image) throws IOException, ImageFormatException;
-
     InputStream getInputStreamUsingPath(String path, String fileName) throws FileNotFoundException;
+
+    void deleteImageUsingPath(String path, String fileName) throws FileNotFoundException;
 }

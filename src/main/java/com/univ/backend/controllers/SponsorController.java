@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
@@ -41,12 +42,12 @@ public class SponsorController {
         return service.getSponsorByName(name);
     }
     @PutMapping("/{name}")
-    public SponsorUpdateResponse sponsorPutRequest(@PathVariable(name = "name") String name, @RequestBody Sponsor sponsorModel) throws SponsorNotFoundException {
-        Sponsor sponsor = service.updateSponsorByName(name, sponsorModel);
+    public SponsorUpdateResponse sponsorPutRequest(@PathVariable(name = "name") String name, @RequestParam(required = false) MultipartFile image, @RequestParam(name = "name", required = false) String sName, @RequestParam(required = false) String details, @RequestParam(required = false) String url) throws SponsorNotFoundException, IOException, ImageFormatException {
+        Sponsor sponsor = service.updateSponsorByName(name, image, sName, details, url);
         return new SponsorUpdateResponse(HttpStatus.OK, sponsor, "Sponsor was updated successfully!", Calendar.getInstance().getTime().getTime());
     }
     @DeleteMapping("/{name}")
-    public SponsorDeleteRequestResponse sponsorDeleteRequest(@PathVariable(name = "name") String name) throws SponsorNotFoundException {
+    public SponsorDeleteRequestResponse sponsorDeleteRequest(@PathVariable(name = "name") String name) throws SponsorNotFoundException, FileNotFoundException {
         Sponsor deletedSponsor = service.deleteSponsorByName(name);
         return new SponsorDeleteRequestResponse(HttpStatus.OK, deletedSponsor, "Sponsor deleted successfully!", Calendar.getInstance().getTime().getTime());
     }

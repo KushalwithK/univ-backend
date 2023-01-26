@@ -6,6 +6,7 @@ import com.univ.backend.exceptions.ImageFormatException;
 import com.univ.backend.exceptions.MandatoryFieldFoundEmptyException;
 import com.univ.backend.exceptions.SponsorNotFoundException;
 import com.univ.backend.models.ImageData;
+import com.univ.backend.repositories.ImageDataRepository;
 import com.univ.backend.repositories.SponsorRepository;
 import com.univ.backend.response.SponsorPostRequestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
@@ -20,6 +22,9 @@ import java.util.Optional;
 
 @Service
 public class SponsorServiceImpl implements SponsorService {
+
+    @Autowired
+    private ImageDataRepository imageDataRepository;
 
     @Autowired
     private SponsorRepository repository;
@@ -58,33 +63,35 @@ public class SponsorServiceImpl implements SponsorService {
 
     // To be changed
     @Override
-    public Sponsor updateSponsorByName(String name, Sponsor sponsorModel) throws SponsorNotFoundException {
+    public Sponsor updateSponsorByName(String name, MultipartFile image, String sName, String details, String url) throws SponsorNotFoundException, IOException, ImageFormatException {
         Optional<Sponsor> optionalSponsor = repository.findByName(name);
         if(optionalSponsor.isEmpty()) {
             throw new SponsorNotFoundException("No Sponsor with name " + name + " not found in database!");
         }
         Sponsor sponsor = optionalSponsor.get();
-        if(sponsorModel.getName() != null && !"".equalsIgnoreCase(sponsorModel.getName())) {
-            sponsor.setName(sponsorModel.getName());
+        if(sName != null && !"".equalsIgnoreCase(sName)) {
+            sponsor.setName(sName);
         }
-        if(sponsorModel.getImage() != null && !"".equalsIgnoreCase(sponsorModel.getImage().getPath())) {
-            sponsor.setImage(sponsorModel.getImage());
+        if(image != null) {
+            fileService.deleteImageUsingPath(sponsor.getImage().getPath(), sponsor.getImage().getName());
+            sponsor.setImage(fileService.uploadImage(Constant.IMAGE_BASE_URL, image));
         }
-        if(sponsorModel.getDetails() != null && !"".equalsIgnoreCase(sponsorModel.getDetails())) {
-            sponsor.setDetails(sponsorModel.getDetails());
+        if(details != null && !"".equalsIgnoreCase(details)) {
+            sponsor.setDetails(details);
         }
         repository.save(sponsor);
         return sponsor;
     }
 
     @Override
-    public Sponsor deleteSponsorByName(String name) throws SponsorNotFoundException {
+    public Sponsor deleteSponsorByName(String name) throws SponsorNotFoundException, FileNotFoundException {
         Optional<Sponsor> optionalToBeDeletedSponsor = repository.findByName(name);
         if(optionalToBeDeletedSponsor.isEmpty()) {
             throw new SponsorNotFoundException("No Sponsor with name " + name + " found in the database!");
         }
         Sponsor toBeDeletedSponsor = optionalToBeDeletedSponsor.get();
-        repository.deleteByName(name);
+        repository.delete(toBeDeletedSponsor);
+        fileService.deleteImageUsingPath(toBeDeletedSponsor.getImage().getPath(), toBeDeletedSponsor.getImage().getName());
         return toBeDeletedSponsor;
     }
 }
