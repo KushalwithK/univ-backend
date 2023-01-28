@@ -1,8 +1,12 @@
 package com.univ.backend.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Admin {
 
     @Id
@@ -13,5 +17,6 @@ public class Admin {
             generator = "admin_id_sequence")
     private Long id;
 
-    private String name;
+    private String userName;
+    private String password;
 }

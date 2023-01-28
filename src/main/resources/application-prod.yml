@@ -1,0 +1,14 @@
+spring:
+  config:
+    activate:
+      on-profile:
+        - prod
+  datasource:
+    url: "jdbc:mysql://localhost:3306/univDatabase"
+    username: root
+    password: Univ@123
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update

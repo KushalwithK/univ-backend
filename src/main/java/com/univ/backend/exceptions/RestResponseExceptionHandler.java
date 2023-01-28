@@ -72,4 +72,31 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }
+
+
+    @ExceptionHandler(IncorrectAdminDataException.class)
+    public ResponseEntity<AdminLoginPostResponse> incorrectAdminDataExceptionHandler(IncorrectAdminDataException exception, WebRequest request) {
+        AdminLoginPostResponse response =
+                new AdminLoginPostResponse(
+                        HttpStatus.BAD_REQUEST,
+                        exception.getAdmin(),
+                        exception.getMessage(),
+                        Calendar.getInstance().getTime().getTime()
+                );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response);
+    }
+
+    @ExceptionHandler(AdminNotFoundException.class)
+    public ResponseEntity<AdminLoginPostResponse> adminNotFoundException(AdminNotFoundException exception, WebRequest request) {
+        AdminLoginPostResponse response =
+                new AdminLoginPostResponse(
+                        HttpStatus.BAD_REQUEST,
+                        exception.getAdmin(),
+                        exception.getMessage(),
+                        Calendar.getInstance().getTime().getTime()
+                );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response);
+    }
 }

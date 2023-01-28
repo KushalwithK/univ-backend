@@ -1,14 +1,20 @@
 package com.univ.backend.services;
 
+import com.univ.backend.constants.Constant;
 import com.univ.backend.entities.TeamEntity;
+import com.univ.backend.exceptions.ImageFormatException;
 import com.univ.backend.exceptions.MandatoryFieldFoundEmptyException;
 import com.univ.backend.exceptions.TeamMemberNotFoundException;
+import com.univ.backend.models.ImageData;
 import com.univ.backend.repositories.TeamRepository;
 import com.univ.backend.response.TeamPutRequestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +25,14 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     public TeamRepository repository;
 
+    @Autowired
+    private FileService fileService;
+
     @Override
-    public TeamPutRequestResponse addTeam(TeamEntity entity) throws MandatoryFieldFoundEmptyException {
-        if (entity.getName() != null && entity.getRole() != null && entity.getInfo() != null && entity.getImage() != null && entity.getImage() != null) {
+    public TeamPutRequestResponse addTeam(TeamEntity entity, MultipartFile image) throws MandatoryFieldFoundEmptyException, IOException, ImageFormatException {
+        if (image != null && entity.getName() != null && entity.getRole() != null && entity.getInfo() != null && entity.getUrl() != null) {
+            ImageData imageData = fileService.uploadImage(Constant.IMAGE_BASE_URL, image);
+            entity.setImage(imageData);
             TeamEntity saved = repository.save(entity);
             return new TeamPutRequestResponse(
                     HttpStatus.OK,
@@ -48,10 +59,10 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamEntity updateTeamDetails(TeamEntity teamModel, Long id) throws TeamMemberNotFoundException {
-        Optional<TeamEntity> optionalTeamMember = repository.findById(id);
+    public TeamEntity updateTeamDetails(TeamEntity teamModel, String name, MultipartFile image) throws TeamMemberNotFoundException, IOException, ImageFormatException {
+        Optional<TeamEntity> optionalTeamMember = repository.findByName(name);
         if(optionalTeamMember.isEmpty()) {
-            throw new TeamMemberNotFoundException("No team member with id " + id + " is not available!");
+            throw new TeamMemberNotFoundException("No team member with name " + name + " is not available!");
         }
         TeamEntity teamMember = optionalTeamMember.get();
         if(teamModel.getName() != null && !"".equalsIgnoreCase(teamModel.getName())) {
@@ -63,8 +74,9 @@ public class TeamServiceImpl implements TeamService {
         if(teamModel.getInfo() != null && !"".equalsIgnoreCase(teamModel.getInfo())) {
             teamMember.setInfo(teamModel.getInfo());
         }
-        if(teamModel.getImage() != null && !"".equalsIgnoreCase(teamModel.getImage())) {
-            teamMember.setImage(teamModel.getImage());
+        if(image != null) {
+            fileService.deleteImageUsingPath(teamMember.getImage().getPath(), teamMember.getImage().getName());
+            teamMember.setImage(fileService.uploadImage(Constant.IMAGE_BASE_URL, image));
         }
         if(teamModel.getUrl() != null && !"".equalsIgnoreCase(teamModel.getUrl())) {
             teamMember.setUrl(teamModel.getUrl());
@@ -74,13 +86,14 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamEntity deleteTeamMemberById(Long id) throws TeamMemberNotFoundException {
-        Optional<TeamEntity> optionalDeletedEntity = repository.findById(id);
+    public TeamEntity deleteTeamMemberById(String name) throws TeamMemberNotFoundException, FileNotFoundException {
+        Optional<TeamEntity> optionalDeletedEntity = repository.findByName(name);
         if(optionalDeletedEntity.isPresent()) {
             TeamEntity deletedEntity = optionalDeletedEntity.get();
-            repository.deleteById(id);
+            repository.delete(deletedEntity);
+            fileService.deleteImageUsingPath(deletedEntity.getImage().getPath(), deletedEntity.getImage().getName());
             return deletedEntity;
         }
-        throw new TeamMemberNotFoundException("No team member with id " + id + " is available!");
+        throw new TeamMemberNotFoundException("No team member with name " + name + " is available!");
     }
 }
