@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.univ</groupId>
 	<artifactId>backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>UnivBackend</name>
 	<description>Project for UNIV Backend Service using SpringBoot ( Java )</description>
 	<properties>
