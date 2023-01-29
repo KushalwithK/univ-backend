@@ -37,6 +37,7 @@ public class SponsorController {
             @RequestParam("username") String adminUserName,
             @RequestParam("password") String adminPassword
     ) throws MandatoryFieldFoundEmptyException, UnexpectedServerErrorOccurredException, ImageFormatException, AdminNotFoundException, IncorrectAdminDataException {
+        assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
         if(adminService.verifyAdmin(adminUserName, adminPassword)) {
             try {
                 return service.addSponsor(new Sponsor(name, details), image);
@@ -57,15 +58,36 @@ public class SponsorController {
     }
 
     @PutMapping("/{name}")
-    public SponsorUpdateResponse sponsorPutRequest(@PathVariable(name = "name") String name, @RequestParam(required = false) MultipartFile image, @RequestParam(name = "name", required = false) String sName, @RequestParam(required = false) String details, @RequestParam(required = false) String url) throws SponsorNotFoundException, IOException, ImageFormatException {
-        Sponsor sponsor = service.updateSponsorByName(name, image, sName, details, url);
-        return new SponsorUpdateResponse(HttpStatus.OK, sponsor, "Sponsor was updated successfully!", Calendar.getInstance().getTime().getTime());
+    public SponsorUpdateResponse sponsorPutRequest(
+            @PathVariable(name = "name") String name,
+            @RequestParam(required = false) MultipartFile image,
+            @RequestParam(name = "name", required = false) String sName,
+            @RequestParam(required = false) String details,
+            @RequestParam(required = false) String url,
+            @RequestParam("username") String adminUserName,
+            @RequestParam("password") String adminPassword
+    ) throws SponsorNotFoundException, IOException, ImageFormatException, AdminNotFoundException, IncorrectAdminDataException {
+        assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
+        if(adminService.verifyAdmin(adminUserName, adminPassword)) {
+            Sponsor sponsor = service.updateSponsorByName(name, image, sName, details, url);
+            return new SponsorUpdateResponse(HttpStatus.OK, sponsor, "Sponsor was updated successfully!", Calendar.getInstance().getTime().getTime());
+        } else {
+            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
+        }
     }
 
     @DeleteMapping("/{name}")
-    public SponsorDeleteRequestResponse sponsorDeleteRequest(@PathVariable(name = "name") String name) throws SponsorNotFoundException, FileNotFoundException {
-        Sponsor deletedSponsor = service.deleteSponsorByName(name);
-        return new SponsorDeleteRequestResponse(HttpStatus.OK, deletedSponsor, "Sponsor deleted successfully!", Calendar.getInstance().getTime().getTime());
+    public SponsorDeleteRequestResponse sponsorDeleteRequest(
+            @PathVariable(name = "name") String name,
+            @RequestParam("username") String adminUserName,
+            @RequestParam("password") String adminPassword
+    ) throws SponsorNotFoundException, FileNotFoundException, AdminNotFoundException, IncorrectAdminDataException {
+        if(adminService.verifyAdmin(adminUserName, adminPassword)) {
+            Sponsor deletedSponsor = service.deleteSponsorByName(name);
+            return new SponsorDeleteRequestResponse(HttpStatus.OK, deletedSponsor, "Sponsor deleted successfully!", Calendar.getInstance().getTime().getTime());
+        } else {
+            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
+        }
     }
 
     @Bean

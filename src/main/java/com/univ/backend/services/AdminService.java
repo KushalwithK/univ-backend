@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AdminService {
 
-    List<Admin> getAdminList(String token);
+    List<Admin> getAdminList();
 
     Admin verifyAdminRequest(Admin admin) throws IncorrectAdminDataException, AdminNotFoundException;
 

@@ -20,8 +20,16 @@ public class AdminController {
     private AdminService adminService;
 
     @GetMapping
-    public List<Admin> getAdminListEndpoint(@RequestHeader(name = "authorization", required = false) String token) {
-        return adminService.getAdminList(token);
+    public List<Admin> getAdminListEndpoint(
+            @RequestParam("username") String adminUserName,
+            @RequestParam("password") String adminPassword
+    ) throws AdminNotFoundException, IncorrectAdminDataException {
+        assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
+        if(adminService.verifyAdmin(adminUserName, adminPassword)) {
+            return adminService.getAdminList();
+        } else {
+            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
+        }
     }
 
     @PostMapping("/login")

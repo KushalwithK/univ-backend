@@ -99,4 +99,18 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }
+
+    @ExceptionHandler(ImageAlreadyExistsException.class)
+    public ResponseEntity<ImageAlreadyExistsResponse> imageAlreadyExistsExceptionHandler(ImageAlreadyExistsException exception, WebRequest request) {
+        ImageAlreadyExistsResponse response =
+                new ImageAlreadyExistsResponse(
+                        HttpStatus.BAD_REQUEST,
+                        exception.getFile(),
+                        exception.getMessage(),
+                        Calendar.getInstance().getTime().getTime()
+                );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response);
+
+    }
 }

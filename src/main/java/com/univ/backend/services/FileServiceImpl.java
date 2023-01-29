@@ -1,5 +1,6 @@
 package com.univ.backend.services;
 
+import com.univ.backend.exceptions.ImageAlreadyExistsException;
 import com.univ.backend.exceptions.ImageFormatException;
 import com.univ.backend.models.ImageData;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,10 @@ public class FileServiceImpl implements FileService {
 
         //Full Path where the image will be saved
         String fullPath = path + usableName;
+
+        if(new File(fullPath).exists()) {
+            throw new ImageAlreadyExistsException(usableName, path, "Provided image already exists.");
+        }
 
         //Creating folder if not present
         File file = new File(path);
