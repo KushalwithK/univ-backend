@@ -59,10 +59,10 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamEntity updateTeamDetails(TeamEntity teamModel, String name, MultipartFile image) throws TeamMemberNotFoundException, IOException, ImageFormatException {
-        Optional<TeamEntity> optionalTeamMember = repository.findByName(name);
+    public TeamEntity updateTeamDetails(TeamEntity teamModel, Long id, MultipartFile image) throws TeamMemberNotFoundException, IOException, ImageFormatException {
+        Optional<TeamEntity> optionalTeamMember = repository.findById(id);
         if(optionalTeamMember.isEmpty()) {
-            throw new TeamMemberNotFoundException("No team member with name " + name + " is not available!");
+            throw new TeamMemberNotFoundException("No team member with id " + id + " is not available!");
         }
         TeamEntity teamMember = optionalTeamMember.get();
         if(teamModel.getName() != null && !"".equalsIgnoreCase(teamModel.getName())) {
@@ -86,14 +86,14 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamEntity deleteTeamMemberById(String name) throws TeamMemberNotFoundException, FileNotFoundException {
-        Optional<TeamEntity> optionalDeletedEntity = repository.findByName(name);
+    public TeamEntity deleteTeamMemberById(Long id) throws TeamMemberNotFoundException, FileNotFoundException {
+        Optional<TeamEntity> optionalDeletedEntity = repository.findById(id);
         if(optionalDeletedEntity.isPresent()) {
             TeamEntity deletedEntity = optionalDeletedEntity.get();
             repository.delete(deletedEntity);
             fileService.deleteImageUsingPath(deletedEntity.getImage().getPath(), deletedEntity.getImage().getName());
             return deletedEntity;
         }
-        throw new TeamMemberNotFoundException("No team member with name " + name + " is available!");
+        throw new TeamMemberNotFoundException("No team member with id " + id + " is available!");
     }
 }

@@ -19,7 +19,7 @@ public interface TeamService {
 
     TeamEntity getTeamByUrl(String url) throws TeamMemberNotFoundException;
 
-    TeamEntity updateTeamDetails(TeamEntity teamModel, String name, MultipartFile image) throws TeamMemberNotFoundException, IOException, ImageFormatException;
+    TeamEntity updateTeamDetails(TeamEntity teamModel, Long id, MultipartFile image) throws TeamMemberNotFoundException, IOException, ImageFormatException;
 
-    TeamEntity deleteTeamMemberById(String name) throws TeamMemberNotFoundException, FileNotFoundException;
+    TeamEntity deleteTeamMemberById(Long id) throws TeamMemberNotFoundException, FileNotFoundException;
 }

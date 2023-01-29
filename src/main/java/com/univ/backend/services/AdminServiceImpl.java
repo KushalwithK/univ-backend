@@ -3,6 +3,7 @@ package com.univ.backend.services;
 import com.univ.backend.entities.Admin;
 import com.univ.backend.exceptions.AdminNotFoundException;
 import com.univ.backend.exceptions.IncorrectAdminDataException;
+import com.univ.backend.exceptions.UnauthorizedException;
 import com.univ.backend.repositories.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,10 +39,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public boolean verifyAdmin(String adminUserName, String adminPassword) throws AdminNotFoundException {
+    public boolean verifyAdmin(String adminUserName, String adminPassword) throws UnauthorizedException {
         Optional<Admin> optionalAdmin = adminRepository.findByUserName(adminUserName);
         if(optionalAdmin.isEmpty()) {
-            throw new AdminNotFoundException("No admin found with the given username!", new Admin(adminUserName, adminPassword));
+            throw new UnauthorizedException("No admin found with the given username!");
         }
         Admin admin = optionalAdmin.get();
         return admin.getUserName().equals(adminUserName) && admin.getPassword().equals(adminPassword);

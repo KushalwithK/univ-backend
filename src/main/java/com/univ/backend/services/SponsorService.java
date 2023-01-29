@@ -21,7 +21,7 @@ public interface SponsorService {
 
     List<Sponsor> getSponsorByName(String name) throws SponsorNotFoundException;
 
-    Sponsor updateSponsorByName(String name, MultipartFile image, String sName, String details, String url) throws SponsorNotFoundException, IOException, ImageFormatException;
+    Sponsor updateSponsorById(Long name, MultipartFile image, String sName, String details, String url) throws SponsorNotFoundException, IOException, ImageFormatException;
 
-    Sponsor deleteSponsorByName(String name) throws SponsorNotFoundException, FileNotFoundException;
+    Sponsor deleteSponsorById(Long name) throws SponsorNotFoundException, FileNotFoundException;
 }

@@ -34,18 +34,20 @@ public class SponsorController {
             @RequestParam("image") MultipartFile image,
             @RequestParam String name,
             @RequestParam String details,
-            @RequestParam("username") String adminUserName,
-            @RequestParam("password") String adminPassword
-    ) throws MandatoryFieldFoundEmptyException, UnexpectedServerErrorOccurredException, ImageFormatException, AdminNotFoundException, IncorrectAdminDataException {
-        assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
-        if(adminService.verifyAdmin(adminUserName, adminPassword)) {
+            @RequestHeader(value = "username", required = false) String adminUserName,
+            @RequestHeader(value = "password", required = false) String adminPassword
+    ) throws MandatoryFieldFoundEmptyException, UnexpectedServerErrorOccurredException, ImageFormatException, UnauthorizedException {
+        if (adminUserName == null || adminPassword == null) {
+            throw new UnauthorizedException("Unauthorized access.");
+        }
+        if (adminService.verifyAdmin(adminUserName, adminPassword)) {
             try {
                 return service.addSponsor(new Sponsor(name, details), image);
             } catch (IOException e) {
                 throw new UnexpectedServerErrorOccurredException(e);
             }
         } else {
-            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
+            throw new UnauthorizedException("The provided admin data was incorrect!");
         }
     }
 
@@ -57,36 +59,41 @@ public class SponsorController {
         return service.getSponsorByName(name);
     }
 
-    @PutMapping("/{name}")
+    @PutMapping
     public SponsorUpdateResponse sponsorPutRequest(
-            @PathVariable(name = "name") String name,
+            @RequestParam(name = "id") String id,
             @RequestParam(required = false) MultipartFile image,
             @RequestParam(name = "name", required = false) String sName,
             @RequestParam(required = false) String details,
             @RequestParam(required = false) String url,
-            @RequestParam("username") String adminUserName,
-            @RequestParam("password") String adminPassword
-    ) throws SponsorNotFoundException, IOException, ImageFormatException, AdminNotFoundException, IncorrectAdminDataException {
-        assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
-        if(adminService.verifyAdmin(adminUserName, adminPassword)) {
-            Sponsor sponsor = service.updateSponsorByName(name, image, sName, details, url);
+            @RequestHeader(value = "username", required = false) String adminUserName,
+            @RequestHeader(value = "password", required = false) String adminPassword
+    ) throws SponsorNotFoundException, IOException, ImageFormatException, UnauthorizedException {
+        if (adminUserName == null || adminPassword == null) {
+            throw new UnauthorizedException("Unauthorized access.");
+        }
+        if (adminService.verifyAdmin(adminUserName, adminPassword)) {
+            Sponsor sponsor = service.updateSponsorById(Long.valueOf(id), image, sName, details, url);
             return new SponsorUpdateResponse(HttpStatus.OK, sponsor, "Sponsor was updated successfully!", Calendar.getInstance().getTime().getTime());
         } else {
-            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
+            throw new UnauthorizedException("The provided admin data was incorrect!");
         }
     }
 
-    @DeleteMapping("/{name}")
+    @DeleteMapping
     public SponsorDeleteRequestResponse sponsorDeleteRequest(
-            @PathVariable(name = "name") String name,
-            @RequestParam("username") String adminUserName,
-            @RequestParam("password") String adminPassword
-    ) throws SponsorNotFoundException, FileNotFoundException, AdminNotFoundException, IncorrectAdminDataException {
-        if(adminService.verifyAdmin(adminUserName, adminPassword)) {
-            Sponsor deletedSponsor = service.deleteSponsorByName(name);
+            @RequestParam(name = "id") String id,
+            @RequestHeader(value = "username", required = false) String adminUserName,
+            @RequestHeader(value = "password", required = false) String adminPassword
+    ) throws SponsorNotFoundException, FileNotFoundException, UnauthorizedException {
+        if (adminUserName == null || adminPassword == null) {
+            throw new UnauthorizedException("Unauthorized access.");
+        }
+        if (adminService.verifyAdmin(adminUserName, adminPassword)) {
+            Sponsor deletedSponsor = service.deleteSponsorById(Long.valueOf(id));
             return new SponsorDeleteRequestResponse(HttpStatus.OK, deletedSponsor, "Sponsor deleted successfully!", Calendar.getInstance().getTime().getTime());
         } else {
-            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
+            throw new UnauthorizedException("The provided admin data was incorrect!");
         }
     }
 

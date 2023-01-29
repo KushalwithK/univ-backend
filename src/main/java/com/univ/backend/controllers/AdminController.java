@@ -3,6 +3,7 @@ package com.univ.backend.controllers;
 import com.univ.backend.entities.Admin;
 import com.univ.backend.exceptions.AdminNotFoundException;
 import com.univ.backend.exceptions.IncorrectAdminDataException;
+import com.univ.backend.exceptions.UnauthorizedException;
 import com.univ.backend.response.AdminLoginPostResponse;
 import com.univ.backend.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class AdminController {
     public List<Admin> getAdminListEndpoint(
             @RequestParam("username") String adminUserName,
             @RequestParam("password") String adminPassword
-    ) throws AdminNotFoundException, IncorrectAdminDataException {
+    ) throws IncorrectAdminDataException, UnauthorizedException {
         assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
         if(adminService.verifyAdmin(adminUserName, adminPassword)) {
             return adminService.getAdminList();

@@ -4,6 +4,7 @@ import com.univ.backend.constants.Constant;
 import com.univ.backend.entities.Admin;
 import com.univ.backend.exceptions.AdminNotFoundException;
 import com.univ.backend.exceptions.IncorrectAdminDataException;
+import com.univ.backend.exceptions.UnauthorizedException;
 import com.univ.backend.services.AdminService;
 import com.univ.backend.services.FileService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,17 +31,17 @@ public class AggregationController {
     @GetMapping(value = "/images/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
     public void getImageUsingName(
             @PathVariable("name") String imageName,
-            @RequestParam("username") String adminUserName,
-            @RequestParam("password") String adminPassword,
+            @RequestHeader("username") String adminUserName,
+            @RequestHeader("password") String adminPassword,
             HttpServletResponse response
-    ) throws IOException, AdminNotFoundException, IncorrectAdminDataException {
+    ) throws IOException, IncorrectAdminDataException, UnauthorizedException {
         assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
         if(adminService.verifyAdmin(adminUserName, adminPassword)) {
             InputStream resource = fileService.getInputStreamUsingPath(Constant.IMAGE_BASE_URL, imageName);
             response.setContentType(MediaType.IMAGE_JPEG_VALUE);
             StreamUtils.copy(resource, response.getOutputStream());
         } else {
-            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
+            throw new UnauthorizedException("The provided admin data was incorrect!");
         }
     }
 }

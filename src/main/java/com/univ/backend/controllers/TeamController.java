@@ -20,7 +20,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/team")
 //@CrossOrigin(origins = "https://localhost:5173")
 public class TeamController {
 
@@ -30,17 +30,19 @@ public class TeamController {
     @Autowired
     private AdminService adminService;
 
-    @PostMapping("/team")
+    @PostMapping
     public TeamPutRequestResponse postTeamDetails(
             @RequestParam("image") MultipartFile image,
             @RequestParam("name") String name,
             @RequestParam("role") String role,
             @RequestParam("info") String info,
             @RequestParam("url") String url,
-            @RequestParam("username") String adminUserName,
-            @RequestParam("password") String adminPassword
-    ) throws MandatoryFieldFoundEmptyException, IOException, ImageFormatException, AdminNotFoundException, IncorrectAdminDataException {
-        assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
+            @RequestHeader(value = "username", required = false) String adminUserName,
+            @RequestHeader(value = "password", required = false) String adminPassword
+    ) throws MandatoryFieldFoundEmptyException, IOException, ImageFormatException, UnauthorizedException {
+        if (adminUserName == null || adminPassword == null) {
+            throw new UnauthorizedException("Unauthorized access.");
+        }
         if (adminService.verifyAdmin(adminUserName, adminPassword)) {
             return service.addTeam(
                     TeamEntity.builder()
@@ -52,11 +54,11 @@ public class TeamController {
                     image
             );
         } else {
-            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
+            throw new UnauthorizedException("The provided admin data was incorrect!");
         }
     }
 
-    @GetMapping("/team")
+    @GetMapping
     public List<TeamEntity> getTeamDetails(@RequestParam(name = "url", required = false) String url) throws TeamMemberNotFoundException {
         if (url == null) {
             return service.getTeams();
@@ -64,18 +66,20 @@ public class TeamController {
         return List.of(service.getTeamByUrl(url));
     }
 
-    @PutMapping("/team/{name}")
+    @PutMapping
     public TeamMemberUpdateResponse teamMemberDetailPutRequest(
-            @PathVariable(name = "name") String fetchName,
+            @RequestParam(name = "id") String id,
             @RequestParam(value = "image", required = false) MultipartFile image,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "role", required = false) String role,
             @RequestParam(value = "info", required = false) String info,
             @RequestParam(value = "url", required = false) String url,
-            @RequestParam("username") String adminUserName,
-            @RequestParam("password") String adminPassword
-    ) throws TeamMemberNotFoundException, IOException, ImageFormatException, AdminNotFoundException, IncorrectAdminDataException {
-        assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
+            @RequestHeader(value = "username", required = false) String adminUserName,
+            @RequestHeader(value = "password", required = false) String adminPassword
+    ) throws TeamMemberNotFoundException, IOException, ImageFormatException, IncorrectAdminDataException, UnauthorizedException {
+        if (adminUserName == null || adminPassword == null) {
+            throw new UnauthorizedException("Unauthorized access.");
+        }
         if (adminService.verifyAdmin(adminUserName, adminPassword)) {
             TeamEntity teamMember = service.updateTeamDetails(
                     TeamEntity.builder()
@@ -84,7 +88,7 @@ public class TeamController {
                             .info(info)
                             .url(url)
                             .build(),
-                    fetchName,
+                    Long.valueOf(id),
                     image);
             return new TeamMemberUpdateResponse(
                     HttpStatus.OK,
@@ -92,22 +96,29 @@ public class TeamController {
                     teamMember.getId() + " was updated successfully!",
                     Calendar.getInstance().getTime().getTime());
         } else {
-            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
+            throw new UnauthorizedException("The provided admin data was incorrect!");
         }
     }
 
-    @DeleteMapping("/team/{name}")
+    @DeleteMapping
     public TeamDeleteRequestResponse teamMemberDeleteRequest(
-            @PathVariable(name = "name") String name,
-            @RequestParam("username") String adminUserName,
-            @RequestParam("password") String adminPassword
-    ) throws TeamMemberNotFoundException, FileNotFoundException, IncorrectAdminDataException, AdminNotFoundException {
-        assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
-        if(adminService.verifyAdmin(adminUserName, adminPassword)) {
-            TeamEntity deletedEntity = service.deleteTeamMemberById(name);
-            return new TeamDeleteRequestResponse(HttpStatus.OK, deletedEntity, "Member " + name + " deleted successfully!", Calendar.getInstance().getTime().getTime());
+            @RequestParam(name = "id") String id,
+            @RequestHeader(value = "username", required = false) String adminUserName,
+            @RequestHeader(value = "password", required = false) String adminPassword
+    ) throws TeamMemberNotFoundException, FileNotFoundException, IncorrectAdminDataException, UnauthorizedException {
+        if (adminUserName == null || adminPassword == null) {
+            throw new UnauthorizedException("Unauthorized access.");
+        }
+        if (adminService.verifyAdmin(adminUserName, adminPassword)) {
+            TeamEntity deletedEntity = service.deleteTeamMemberById(Long.valueOf(id));
+            return new TeamDeleteRequestResponse(
+                    HttpStatus.OK,
+                    deletedEntity,
+                    "Member " + id + " deleted successfully!",
+                    Calendar.getInstance().getTime().getTime()
+            );
         } else {
-            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
+            throw new UnauthorizedException("The provided admin data was incorrect!");
         }
     }
 

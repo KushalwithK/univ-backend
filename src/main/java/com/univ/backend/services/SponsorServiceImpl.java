@@ -63,10 +63,10 @@ public class SponsorServiceImpl implements SponsorService {
 
     // To be changed
     @Override
-    public Sponsor updateSponsorByName(String name, MultipartFile image, String sName, String details, String url) throws SponsorNotFoundException, IOException, ImageFormatException {
-        Optional<Sponsor> optionalSponsor = repository.findByName(name);
+    public Sponsor updateSponsorById(Long id, MultipartFile image, String sName, String details, String url) throws SponsorNotFoundException, IOException, ImageFormatException {
+        Optional<Sponsor> optionalSponsor = repository.findById(id);
         if(optionalSponsor.isEmpty()) {
-            throw new SponsorNotFoundException("No Sponsor with name " + name + " not found in database!");
+            throw new SponsorNotFoundException("No Sponsor with id " + id + " not found in database!");
         }
         Sponsor sponsor = optionalSponsor.get();
         if(sName != null && !"".equalsIgnoreCase(sName)) {
@@ -84,10 +84,10 @@ public class SponsorServiceImpl implements SponsorService {
     }
 
     @Override
-    public Sponsor deleteSponsorByName(String name) throws SponsorNotFoundException, FileNotFoundException {
-        Optional<Sponsor> optionalToBeDeletedSponsor = repository.findByName(name);
+    public Sponsor deleteSponsorById(Long id) throws SponsorNotFoundException, FileNotFoundException {
+        Optional<Sponsor> optionalToBeDeletedSponsor = repository.findById(id);
         if(optionalToBeDeletedSponsor.isEmpty()) {
-            throw new SponsorNotFoundException("No Sponsor with name " + name + " found in the database!");
+            throw new SponsorNotFoundException("No Sponsor with id " + id + " found in the database!");
         }
         Sponsor toBeDeletedSponsor = optionalToBeDeletedSponsor.get();
         repository.delete(toBeDeletedSponsor);

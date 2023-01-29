@@ -113,4 +113,25 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
                 .body(response);
 
     }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<UnauthorizedExceptionResponse> unauthorizedExceptionHandler(UnauthorizedException exception, WebRequest request) {
+        UnauthorizedExceptionResponse response =
+                new UnauthorizedExceptionResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), Calendar.getInstance().getTime().getTime());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(response);
+    }
+
+    @ExceptionHandler(ExpertiseNotFoundException.class)
+    public ResponseEntity<ExpertiseNotFoundResponse> expertiseNotFoundException(SponsorNotFoundException exception, WebRequest request) {
+        ExpertiseNotFoundResponse response =
+                new ExpertiseNotFoundResponse(
+                        HttpStatus.NOT_FOUND,
+                        exception.getMessage(),
+                        Calendar.getInstance().getTime().getTime()
+                );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
 }
