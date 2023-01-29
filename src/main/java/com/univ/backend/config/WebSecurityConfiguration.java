@@ -10,15 +10,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 @Configuration
 @Component
-public class WebSecurityConfiguration  {
+public class WebSecurityConfiguration {
 
     @Bean
     public WebMvcConfigurer configure() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:5173", "http://172.20.10.2:5173/").allowedMethods("GET", "POST", "OPTIONS", "DELETE", "PUT")
-                        .allowedHeaders("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method",
+                registry.addMapping("/**").allowedOrigins("http://localhost:5173").allowedMethods("GET", "POST", "OPTIONS", "DELETE", "PUT")
+                        .allowedHeaders("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Allow-Origin",
+                                "Access-Control-Request-Headers")
+                        .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
+                        .allowCredentials(true).maxAge(3600);
+                registry.addMapping("/**").allowedOrigins("http://172.20.10.2:5173").allowedMethods("GET", "POST", "OPTIONS", "DELETE", "PUT")
+                        .allowedHeaders("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Allow-Origin",
                                 "Access-Control-Request-Headers")
                         .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
                         .allowCredentials(true).maxAge(3600);
