@@ -12,4 +12,6 @@ public interface AdminService {
     List<Admin> getAdminList(String token);
 
     Admin verifyAdminRequest(Admin admin) throws IncorrectAdminDataException, AdminNotFoundException;
+
+    boolean verifyAdmin(String adminUserName, String adminPassword) throws AdminNotFoundException;
 }

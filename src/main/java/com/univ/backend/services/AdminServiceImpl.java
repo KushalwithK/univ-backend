@@ -36,4 +36,14 @@ public class AdminServiceImpl implements AdminService {
         }
         throw new AdminNotFoundException("No admin found with the given username!", admin);
     }
+
+    @Override
+    public boolean verifyAdmin(String adminUserName, String adminPassword) throws AdminNotFoundException {
+        Optional<Admin> optionalAdmin = adminRepository.findByUserName(adminUserName);
+        if(optionalAdmin.isEmpty()) {
+            throw new AdminNotFoundException("No admin found with the given username!", new Admin(adminUserName, adminPassword));
+        }
+        Admin admin = optionalAdmin.get();
+        return admin.getUserName().equals(adminUserName) && admin.getPassword().equals(adminPassword);
+    }
 }

@@ -1,12 +1,16 @@
 package com.univ.backend.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Admin {
 
     @Id
@@ -19,4 +23,9 @@ public class Admin {
 
     private String userName;
     private String password;
+
+    public Admin(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
 }

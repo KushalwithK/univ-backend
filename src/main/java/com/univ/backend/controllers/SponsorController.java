@@ -1,11 +1,10 @@
 package com.univ.backend.controllers;
 
+import com.univ.backend.entities.Admin;
 import com.univ.backend.entities.Sponsor;
-import com.univ.backend.exceptions.ImageFormatException;
-import com.univ.backend.exceptions.MandatoryFieldFoundEmptyException;
-import com.univ.backend.exceptions.SponsorNotFoundException;
-import com.univ.backend.exceptions.UnexpectedServerErrorOccurredException;
+import com.univ.backend.exceptions.*;
 import com.univ.backend.response.*;
+import com.univ.backend.services.AdminService;
 import com.univ.backend.services.SponsorService;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +25,29 @@ public class SponsorController {
 
     @Autowired
     private SponsorService service;
+
+    @Autowired
+    private AdminService adminService;
+
     @PostMapping(consumes = "multipart/form-data")
-    public SponsorPostRequestResponse sponsorPostRequest(@RequestParam("image") MultipartFile image, @RequestParam String name, @RequestParam String details) throws MandatoryFieldFoundEmptyException, UnexpectedServerErrorOccurredException, ImageFormatException {
-        try {
-            return service.addSponsor(new Sponsor(name, details), image);
-        } catch (IOException e) {
-            throw new UnexpectedServerErrorOccurredException(e);
+    public SponsorPostRequestResponse sponsorPostRequest(
+            @RequestParam("image") MultipartFile image,
+            @RequestParam String name,
+            @RequestParam String details,
+            @RequestParam("username") String adminUserName,
+            @RequestParam("password") String adminPassword
+    ) throws MandatoryFieldFoundEmptyException, UnexpectedServerErrorOccurredException, ImageFormatException, AdminNotFoundException, IncorrectAdminDataException {
+        if(adminService.verifyAdmin(adminUserName, adminPassword)) {
+            try {
+                return service.addSponsor(new Sponsor(name, details), image);
+            } catch (IOException e) {
+                throw new UnexpectedServerErrorOccurredException(e);
+            }
+        } else {
+            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
         }
     }
+
     @GetMapping
     public List<Sponsor> sponsorGetRequest(@RequestParam(name = "name", required = false) String name) throws SponsorNotFoundException {
         if (name == null) {
@@ -41,11 +55,13 @@ public class SponsorController {
         }
         return service.getSponsorByName(name);
     }
+
     @PutMapping("/{name}")
     public SponsorUpdateResponse sponsorPutRequest(@PathVariable(name = "name") String name, @RequestParam(required = false) MultipartFile image, @RequestParam(name = "name", required = false) String sName, @RequestParam(required = false) String details, @RequestParam(required = false) String url) throws SponsorNotFoundException, IOException, ImageFormatException {
         Sponsor sponsor = service.updateSponsorByName(name, image, sName, details, url);
         return new SponsorUpdateResponse(HttpStatus.OK, sponsor, "Sponsor was updated successfully!", Calendar.getInstance().getTime().getTime());
     }
+
     @DeleteMapping("/{name}")
     public SponsorDeleteRequestResponse sponsorDeleteRequest(@PathVariable(name = "name") String name) throws SponsorNotFoundException, FileNotFoundException {
         Sponsor deletedSponsor = service.deleteSponsorByName(name);
