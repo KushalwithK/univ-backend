@@ -19,12 +19,12 @@ public class WebSecurityConfiguration {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**").allowedOrigins("http://localhost:5173").allowedMethods("GET", "POST", "OPTIONS", "DELETE", "PUT")
                         .allowedHeaders("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Allow-Origin",
-                                "Access-Control-Request-Headers")
+                                "Access-Control-Request-Headers", "username", "password")
                         .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
                         .allowCredentials(true).maxAge(3600);
                 registry.addMapping("/**").allowedOrigins("http://172.20.10.2:5173").allowedMethods("GET", "POST", "OPTIONS", "DELETE", "PUT")
                         .allowedHeaders("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Allow-Origin",
-                                "Access-Control-Request-Headers")
+                                "Access-Control-Request-Headers", "username", "password")
                         .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
                         .allowCredentials(true).maxAge(3600);
             }
