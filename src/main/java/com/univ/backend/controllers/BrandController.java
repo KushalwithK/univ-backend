@@ -1,10 +1,13 @@
 package com.univ.backend.controllers;
 
+import com.univ.backend.entities.Brand;
 import com.univ.backend.entities.Sponsor;
 import com.univ.backend.exceptions.*;
-import com.univ.backend.response.*;
+import com.univ.backend.response.DeleteRequestResponse;
+import com.univ.backend.response.PostRequestResponse;
+import com.univ.backend.response.UpdateResponse;
 import com.univ.backend.services.AdminService;
-import com.univ.backend.services.SponsorService;
+import com.univ.backend.services.BrandService;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,18 +21,17 @@ import java.util.Calendar;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/sponsor")
-//@CrossOrigin(origins = "https://localhost:5173")
-public class SponsorController {
+@RequestMapping("/api/v1/brand")
+public class BrandController {
 
     @Autowired
-    private SponsorService service;
+    private BrandService service;
 
     @Autowired
     private AdminService adminService;
 
     @PostMapping(consumes = "multipart/form-data")
-    public PostRequestResponse<Sponsor> sponsorPostRequest(
+    public PostRequestResponse<Brand> sponsorPostRequest(
             @RequestParam("image") MultipartFile image,
             @RequestParam String name,
             @RequestParam String details,
@@ -41,7 +43,7 @@ public class SponsorController {
         }
         if (adminService.verifyAdmin(adminUserName, adminPassword)) {
             try {
-                return service.addSponsor(new Sponsor(name, details), image);
+                return service.addBrand(new Brand(name, details), image);
             } catch (IOException e) {
                 throw new UnexpectedServerErrorOccurredException(e);
             }
@@ -51,15 +53,15 @@ public class SponsorController {
     }
 
     @GetMapping
-    public List<Sponsor> sponsorGetRequest(@RequestParam(name = "name", required = false) String name) throws SponsorNotFoundException {
+    public List<Brand> sponsorGetRequest(@RequestParam(name = "name", required = false) String name) throws SponsorNotFoundException {
         if (name == null) {
-            return service.getAllSponsors();
+            return service.getAllBrands();
         }
-        return service.getSponsorByName(name);
+        return service.getBrandByName(name);
     }
 
     @PutMapping
-    public UpdateResponse<Sponsor> sponsorPutRequest(
+    public UpdateResponse<Brand> sponsorPutRequest(
             @RequestParam(name = "id") String id,
             @RequestParam(required = false) MultipartFile image,
             @RequestParam(name = "name", required = false) String sName,
@@ -72,15 +74,15 @@ public class SponsorController {
             throw new UnauthorizedException("Unauthorized access.");
         }
         if (adminService.verifyAdmin(adminUserName, adminPassword)) {
-            Sponsor sponsor = service.updateSponsorById(Long.valueOf(id), image, sName, details, url);
-            return new UpdateResponse<>(HttpStatus.OK, sponsor, "Sponsor was updated successfully!", Calendar.getInstance().getTime().getTime());
+            Brand brand = service.updateBrandById(Long.valueOf(id), image, sName, details, url);
+            return new UpdateResponse<>(HttpStatus.OK, brand, "Sponsor was updated successfully!", Calendar.getInstance().getTime().getTime());
         } else {
             throw new UnauthorizedException("The provided admin data was incorrect!");
         }
     }
 
     @DeleteMapping
-    public DeleteRequestResponse<Sponsor> sponsorDeleteRequest(
+    public DeleteRequestResponse<Brand> sponsorDeleteRequest(
             @RequestParam(name = "id") String id,
             @RequestHeader(value = "username", required = false) String adminUserName,
             @RequestHeader(value = "password", required = false) String adminPassword
@@ -89,15 +91,10 @@ public class SponsorController {
             throw new UnauthorizedException("Unauthorized access.");
         }
         if (adminService.verifyAdmin(adminUserName, adminPassword)) {
-            Sponsor deletedSponsor = service.deleteSponsorById(Long.valueOf(id));
-            return new DeleteRequestResponse<>(HttpStatus.OK, deletedSponsor, "Sponsor deleted successfully!", Calendar.getInstance().getTime().getTime());
+            Brand deletedBrand = service.deleteBrandById(Long.valueOf(id));
+            return new DeleteRequestResponse<>(HttpStatus.OK, deletedBrand, "Sponsor deleted successfully!", Calendar.getInstance().getTime().getTime());
         } else {
             throw new UnauthorizedException("The provided admin data was incorrect!");
         }
-    }
-
-    @Bean
-    public MultipartConfigElement multipartConfigElement() {
-        return new MultipartConfigElement("");
     }
 }

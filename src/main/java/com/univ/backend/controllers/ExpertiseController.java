@@ -1,17 +1,13 @@
 package com.univ.backend.controllers;
 
-import com.univ.backend.entities.Admin;
 import com.univ.backend.entities.Expertise;
-import com.univ.backend.entities.Sponsor;
 import com.univ.backend.exceptions.*;
 import com.univ.backend.response.ExpertiseDeleteResponse;
 import com.univ.backend.response.ExpertisePostRequestResponse;
-import com.univ.backend.response.SponsorDeleteRequestResponse;
 import com.univ.backend.services.AdminService;
 import com.univ.backend.services.ExpertiseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

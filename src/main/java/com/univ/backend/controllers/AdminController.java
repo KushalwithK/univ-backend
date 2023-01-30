@@ -33,6 +33,20 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/verify")
+    public AdminLoginPostResponse verifyAdminPostResponse(@RequestHeader("username") String username, @RequestHeader("password") String password) throws AdminNotFoundException, IncorrectAdminDataException {
+        if(username != null && password != null) {
+            Admin postedAdmin = adminService.verifyAdminRequest(new Admin(username, password));
+            return new AdminLoginPostResponse(
+                    HttpStatus.OK,
+                    postedAdmin,
+                    postedAdmin.getUserName() + " was a valid admin!",
+                    Calendar.getInstance().getTime().getTime()
+            );
+        }
+        throw new IllegalArgumentException("Unauthorized!");
+    }
+
     @PostMapping("/login")
     public AdminLoginPostResponse postAdminPostRequest(@RequestBody Admin admin) throws AdminNotFoundException, IncorrectAdminDataException {
         if(admin != null) {
@@ -44,6 +58,6 @@ public class AdminController {
                     Calendar.getInstance().getTime().getTime()
             );
         }
-        throw new IllegalArgumentException("Please provide with the admin details!");
+        throw new IllegalArgumentException("Unauthorized!");
     }
 }

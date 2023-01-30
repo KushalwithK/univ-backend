@@ -9,9 +9,10 @@ import org.springframework.http.HttpStatus;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SponsorPostRequestResponse {
+public class UpdateResponse<T> {
     private HttpStatus status;
-    private Sponsor postedData;
+    private T updatedResponse;
     private String message;
     private Long timeStamp;
 }
+

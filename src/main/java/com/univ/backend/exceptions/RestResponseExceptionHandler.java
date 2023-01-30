@@ -41,9 +41,9 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(SponsorNotFoundException.class)
-    public ResponseEntity<SponsorGetRequestResponse> sponsorNotFoundException(SponsorNotFoundException exception, WebRequest request) {
-        SponsorGetRequestResponse response =
-                new SponsorGetRequestResponse(
+    public ResponseEntity<GetRequestResponse> sponsorNotFoundException(SponsorNotFoundException exception, WebRequest request) {
+        GetRequestResponse response =
+                new GetRequestResponse(
                         HttpStatus.NOT_FOUND,
                         exception.getMessage(),
                         Calendar.getInstance().getTime().getTime()

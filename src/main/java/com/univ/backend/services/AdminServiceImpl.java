@@ -35,7 +35,7 @@ public class AdminServiceImpl implements AdminService {
                 throw new IncorrectAdminDataException("The password is incorrect!", mainAdmin);
             }
         }
-        throw new AdminNotFoundException("No admin found with the given username!", admin);
+        throw new AdminNotFoundException("The username is incorrect!", admin);
     }
 
     @Override

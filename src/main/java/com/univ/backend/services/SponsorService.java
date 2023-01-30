@@ -4,8 +4,7 @@ import com.univ.backend.entities.Sponsor;
 import com.univ.backend.exceptions.ImageFormatException;
 import com.univ.backend.exceptions.MandatoryFieldFoundEmptyException;
 import com.univ.backend.exceptions.SponsorNotFoundException;
-import com.univ.backend.response.SponsorPostRequestResponse;
-import com.univ.backend.response.SponsorUpdateResponse;
+import com.univ.backend.response.PostRequestResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -15,7 +14,7 @@ import java.util.List;
 public interface SponsorService {
 
 
-    SponsorPostRequestResponse addSponsor(Sponsor sponsor, MultipartFile image) throws MandatoryFieldFoundEmptyException, IOException, ImageFormatException;
+    PostRequestResponse<Sponsor> addSponsor(Sponsor sponsor, MultipartFile image) throws MandatoryFieldFoundEmptyException, IOException, ImageFormatException;
 
     List<Sponsor> getAllSponsors();
 

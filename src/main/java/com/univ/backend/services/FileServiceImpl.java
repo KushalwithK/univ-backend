@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ public class FileServiceImpl implements FileService {
         if (!(Objects.equals(image.getContentType(), MediaType.IMAGE_PNG_VALUE) || Objects.equals(image.getContentType(), MediaType.IMAGE_JPEG_VALUE))) {
             throw new ImageFormatException("Provided file is not an image!");
         }
+        long timeStamp = Calendar.getInstance().getTime().getTime();
         //Name of the image.
         String originalName = image.getOriginalFilename();
         assert originalName != null;
