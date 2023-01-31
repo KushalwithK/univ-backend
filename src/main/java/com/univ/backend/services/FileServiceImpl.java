@@ -27,7 +27,9 @@ public class FileServiceImpl implements FileService {
         //Name of the image.
         String originalName = image.getOriginalFilename();
         assert originalName != null;
-        String usableName = originalName.replace(" ", "_").toLowerCase();
+        String changedName = originalName.replace(" ", "_").toLowerCase().substring(0, originalName.lastIndexOf("."));
+        String usableName = changedName + "-" + timeStamp + originalName.substring(originalName.lastIndexOf("."));
+
 
         //Full Path where the image will be saved
         String fullPath = path + usableName;

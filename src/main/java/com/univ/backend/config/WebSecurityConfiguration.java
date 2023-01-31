@@ -13,7 +13,7 @@ public class WebSecurityConfiguration implements WebMvcConfigurer {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("*")
-                        .allowedOrigins("http://172.20.10.2:5173")
+                        .allowedOrigins("http://192.168.89.169:5173", "http://192.168.91.106:5173")
                         .allowedHeaders("*")
 //                        .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
                         .allowCredentials(false).maxAge(3600);
