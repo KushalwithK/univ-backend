@@ -25,9 +25,6 @@ public class AggregationController {
     @Autowired
     private FileService fileService;
 
-    @Autowired
-    private AdminService adminService;
-
     @GetMapping(value = "/images/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
     public void getImageUsingName(
             @PathVariable("name") String imageName,
@@ -35,13 +32,8 @@ public class AggregationController {
             @RequestHeader("password") String adminPassword,
             HttpServletResponse response
     ) throws IOException, IncorrectAdminDataException, UnauthorizedException {
-        assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
-        if(adminService.verifyAdmin(adminUserName, adminPassword)) {
             InputStream resource = fileService.getInputStreamUsingPath(Constant.IMAGE_BASE_URL, imageName);
             response.setContentType(MediaType.IMAGE_JPEG_VALUE);
             StreamUtils.copy(resource, response.getOutputStream());
-        } else {
-            throw new UnauthorizedException("The provided admin data was incorrect!");
-        }
     }
 }
