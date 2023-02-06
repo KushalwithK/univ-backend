@@ -28,8 +28,6 @@ public class AggregationController {
     @GetMapping(value = "/images/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
     public void getImageUsingName(
             @PathVariable("name") String imageName,
-            @RequestHeader("username") String adminUserName,
-            @RequestHeader("password") String adminPassword,
             HttpServletResponse response
     ) throws IOException, IncorrectAdminDataException, UnauthorizedException {
             InputStream resource = fileService.getInputStreamUsingPath(Constant.IMAGE_BASE_URL, imageName);
