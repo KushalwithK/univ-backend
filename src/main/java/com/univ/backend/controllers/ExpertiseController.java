@@ -35,6 +35,7 @@ public class ExpertiseController {
     }
 
     @PostMapping
+    @CrossOrigin
     public ExpertisePostRequestResponse expertisePostRequestResponse(
             @RequestParam("bg") MultipartFile bg,
             @RequestParam("name") String name,
