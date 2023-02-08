@@ -42,7 +42,7 @@ public class ExpertiseController {
             @RequestParam("url") String url,
             @RequestHeader(value = "username", required = false) String adminUserName,
             @RequestHeader(value = "password", required = false) String adminPassword
-    ) throws UnauthorizedException {
+    ) throws UnauthorizedException, IOException, ImageFormatException, MandatoryFieldFoundEmptyException {
         if (adminUserName == null && adminPassword == null) {
             throw new UnauthorizedException("Unauthorized access.");
         }
@@ -110,7 +110,7 @@ public class ExpertiseController {
         }
         if (adminService.verifyAdmin(adminUserName, adminPassword)) {
             Expertise deletedExpertise = service.deleteSponsorById(Long.valueOf(id));
-            return new ExpertiseDeleteResponse(HttpStatus.OK, deletedExpertise, "Sponsor deleted successfully!", Calendar.getInstance().getTime().getTime());
+            return new ExpertiseDeleteResponse(HttpStatus.OK, deletedExpertise, "Expertise deleted successfully!", Calendar.getInstance().getTime().getTime());
         } else {
             throw new UnauthorizedException("The provided admin data was incorrect!");
         }

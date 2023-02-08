@@ -5,7 +5,9 @@ import com.univ.backend.entities.Expertise;
 import com.univ.backend.entities.Sponsor;
 import com.univ.backend.exceptions.ExpertiseNotFoundException;
 import com.univ.backend.exceptions.ImageFormatException;
+import com.univ.backend.exceptions.MandatoryFieldFoundEmptyException;
 import com.univ.backend.exceptions.SponsorNotFoundException;
+import com.univ.backend.models.ImageData;
 import com.univ.backend.repositories.ExpertiseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,21 +35,26 @@ public class ExpertiseServiceImpl implements ExpertiseService {
 
     @Override
     public Expertise getExpertiseByName(String name) {
-        Assert.notNull(name, "Name cannot be null!");
         Optional<Expertise> optionalExpertise = repository.findByName(name);
         return optionalExpertise.orElse(null);
     }
 
     @Override
-    public Expertise postExpertiseWithDetails(Expertise expertise, MultipartFile bg) {
-        return repository.save(expertise);
+    public Expertise postExpertiseWithDetails(Expertise expertise, MultipartFile bg) throws IOException, ImageFormatException, MandatoryFieldFoundEmptyException {
+        if (bg != null && expertise.getName() != null && expertise.getInfo() != null && expertise.getUrl() != null) {
+            ImageData imageData = fileService.uploadImage(Constant.IMAGE_BASE_URL, bg);
+            expertise.setBg(imageData);
+            Expertise saved = repository.save(expertise);
+            return saved;
+        }
+        throw new MandatoryFieldFoundEmptyException("Mandatory fields ( name, details and image ) must be filled!");
     }
 
     @Override
     public Expertise updateExpertiseUsingId(Expertise expertise, MultipartFile bg, Long id) throws ExpertiseNotFoundException, IOException, ImageFormatException {
         Optional<Expertise> optionalExpertise = repository.findById(id);
         if(optionalExpertise.isEmpty()) {
-            throw new ExpertiseNotFoundException("No Sponsor with id " + id + " not found in database!");
+            throw new ExpertiseNotFoundException("No Expertise with id " + id + " not found in database!");
         }
         Expertise getExpertise = optionalExpertise.get();
         if(expertise.getName() != null && !"".equalsIgnoreCase(expertise.getName())) {
@@ -68,7 +75,7 @@ public class ExpertiseServiceImpl implements ExpertiseService {
     public Expertise deleteSponsorById(Long id) throws ExpertiseNotFoundException, FileNotFoundException {
         Optional<Expertise> optionalToBeDeletedExpertise = repository.findById(id);
         if(optionalToBeDeletedExpertise.isEmpty()) {
-            throw new ExpertiseNotFoundException("No Sponsor with id " + id + " found in the database!");
+            throw new ExpertiseNotFoundException("No Expertise with id " + id + " found in the database!");
         }
         Expertise toBeDeletedExpertise = optionalToBeDeletedExpertise.get();
         repository.delete(toBeDeletedExpertise);

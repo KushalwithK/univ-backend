@@ -18,7 +18,7 @@ import java.util.Calendar;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/sponsor")
+@RequestMapping("/api/v1/client")
 //@CrossOrigin(origins = "https://localhost:5173")
 public class SponsorController {
 
@@ -73,7 +73,7 @@ public class SponsorController {
         }
         if (adminService.verifyAdmin(adminUserName, adminPassword)) {
             Sponsor sponsor = service.updateSponsorById(Long.valueOf(id), image, sName, details, url);
-            return new UpdateResponse<>(HttpStatus.OK, sponsor, "Sponsor was updated successfully!", Calendar.getInstance().getTime().getTime());
+            return new UpdateResponse<>(HttpStatus.OK, sponsor, "Client was updated successfully!", Calendar.getInstance().getTime().getTime());
         } else {
             throw new UnauthorizedException("The provided admin data was incorrect!");
         }
@@ -90,7 +90,7 @@ public class SponsorController {
         }
         if (adminService.verifyAdmin(adminUserName, adminPassword)) {
             Sponsor deletedSponsor = service.deleteSponsorById(Long.valueOf(id));
-            return new DeleteRequestResponse<>(HttpStatus.OK, deletedSponsor, "Sponsor deleted successfully!", Calendar.getInstance().getTime().getTime());
+            return new DeleteRequestResponse<>(HttpStatus.OK, deletedSponsor, "Client deleted successfully!", Calendar.getInstance().getTime().getTime());
         } else {
             throw new UnauthorizedException("The provided admin data was incorrect!");
         }
