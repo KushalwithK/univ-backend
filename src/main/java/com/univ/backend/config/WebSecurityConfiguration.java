@@ -7,6 +7,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import jakarta.servlet.MultipartConfigElement;
+
+@EnableWebMvc
 @Configuration
 public class WebSecurityConfiguration implements WebMvcConfigurer {
     @Override
@@ -22,8 +25,10 @@ public class WebSecurityConfiguration implements WebMvcConfigurer {
                         "https://www.univsportatech.in",
                         "https://admin.univsportatech.in")
                 .allowedHeaders("*")
-                // .exposedHeaders("Access-Control-Allow-Origin",
-                // "Access-Control-Allow-Credentials")
+                .exposedHeaders(
+                        "Access-Control-Allow-Origin",
+                        "Access-Control-Allow-Credentials")
                 .allowCredentials(false).maxAge(3600);
     }
+
 }

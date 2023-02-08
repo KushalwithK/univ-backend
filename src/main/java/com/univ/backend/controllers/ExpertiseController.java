@@ -8,6 +8,7 @@ import com.univ.backend.services.AdminService;
 import com.univ.backend.services.ExpertiseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/expertise")
+// @CrossOrigin(origins = "https://localhost:5173")
 public class ExpertiseController {
 
     @Autowired
@@ -35,7 +37,6 @@ public class ExpertiseController {
     }
 
     @PostMapping
-    @CrossOrigin
     public ExpertisePostRequestResponse expertisePostRequestResponse(
             @RequestParam("bg") MultipartFile bg,
             @RequestParam("name") String name,
