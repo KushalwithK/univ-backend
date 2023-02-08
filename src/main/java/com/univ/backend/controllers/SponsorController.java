@@ -96,8 +96,5 @@ public class SponsorController {
         }
     }
 
-    @Bean
-    public MultipartConfigElement multipartConfigElement() {
-        return new MultipartConfigElement("");
-    }
+    
 }
