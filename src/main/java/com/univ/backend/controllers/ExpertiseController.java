@@ -27,11 +27,11 @@ public class ExpertiseController {
     private AdminService adminService;
 
     @GetMapping
-    public List<Expertise> getAllExpertiseList(@RequestParam(required = false) String name) {
-        if (name == null) {
-            return service.getAllExpertise();
+    public List<Expertise> getAllExpertiseList(@RequestParam(required = false) String name) throws ExpertiseNotFoundException {
+        if (name != null) {
+            return List.of(service.getExpertiseByName(name));
         }
-        return List.of(service.getExpertiseByName(name));
+        return service.getAllExpertise();
     }
 
     @PostMapping

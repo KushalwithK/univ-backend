@@ -22,15 +22,10 @@ public class AdminController {
 
     @GetMapping
     public List<Admin> getAdminListEndpoint(
-            @RequestParam("username") String adminUserName,
-            @RequestParam("password") String adminPassword
     ) throws IncorrectAdminDataException, UnauthorizedException {
-        assert (adminUserName != null && adminPassword != null) : "Admin username and password cannot be null.";
-        if(adminService.verifyAdmin(adminUserName, adminPassword)) {
+        
             return adminService.getAdminList();
-        } else {
-            throw new IncorrectAdminDataException("The provided admin data was incorrect!", new Admin(adminUserName, adminPassword));
-        }
+        
     }
 
     @GetMapping("/verify")

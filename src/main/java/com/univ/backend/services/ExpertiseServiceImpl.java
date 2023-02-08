@@ -34,9 +34,12 @@ public class ExpertiseServiceImpl implements ExpertiseService {
     }
 
     @Override
-    public Expertise getExpertiseByName(String name) {
+    public Expertise getExpertiseByName(String name) throws ExpertiseNotFoundException {
         Optional<Expertise> optionalExpertise = repository.findByName(name);
-        return optionalExpertise.orElse(null);
+        if(optionalExpertise.isPresent()) {
+            return optionalExpertise.get();
+        }
+        throw new ExpertiseNotFoundException("No Expertise with name " + name + " was found in database!");
     }
 
     @Override

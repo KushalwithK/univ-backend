@@ -14,7 +14,7 @@ import java.util.List;
 public interface ExpertiseService {
     List<Expertise> getAllExpertise();
 
-    Expertise getExpertiseByName(String name);
+    Expertise getExpertiseByName(String name) throws ExpertiseNotFoundException;
 
     Expertise postExpertiseWithDetails(Expertise expertise, MultipartFile bg) throws IOException, ImageFormatException, MandatoryFieldFoundEmptyException;
 
