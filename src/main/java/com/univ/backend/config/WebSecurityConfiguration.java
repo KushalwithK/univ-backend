@@ -18,12 +18,16 @@ public class WebSecurityConfiguration implements WebMvcConfigurer {
                 .allowedMethods("*")
                 .allowedOrigins(
                         "http://192.168.89.169:5173",
+                        "http://192.168.89.169:5174",
+                        "http://192.168.1.4:5173",
                         "http://172.20.10.2:5173",
                         "http://172.20.10.2:5174",
                         "http://153.92.4.150",
                         "https://univsportatech.in",
                         "https://www.univsportatech.in",
-                        "https://admin.univsportatech.in")
+                        "https://admin.univsportatech.in",
+                        "http://localhost:3000"
+                )
                 .allowedHeaders("*")
                 .exposedHeaders(
                         "Access-Control-Allow-Origin",

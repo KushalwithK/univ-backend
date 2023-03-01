@@ -6,9 +6,9 @@ server:
       enabled: false  
 
 spring:
-  profiles:
-    active:
-      - test
+  # profiles:
+  #   active:
+  #     - test
   datasource:
     url: "jdbc:mysql://localhost:3306/univBackendDB"
     username: root

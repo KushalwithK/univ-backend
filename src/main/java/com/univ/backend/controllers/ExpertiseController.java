@@ -29,7 +29,8 @@ public class ExpertiseController {
     private AdminService adminService;
 
     @GetMapping
-    public List<Expertise> getAllExpertiseList(@RequestParam(required = false) String name) throws ExpertiseNotFoundException {
+    public List<Expertise> getAllExpertiseList(@RequestParam(required = false) String name)
+            throws ExpertiseNotFoundException {
         if (name != null) {
             return List.of(service.getExpertiseByName(name));
         }
@@ -43,8 +44,8 @@ public class ExpertiseController {
             @RequestParam("info") String info,
             @RequestParam("url") String url,
             @RequestHeader(value = "username", required = false) String adminUserName,
-            @RequestHeader(value = "password", required = false) String adminPassword
-    ) throws UnauthorizedException, IOException, ImageFormatException, MandatoryFieldFoundEmptyException {
+            @RequestHeader(value = "password", required = false) String adminPassword)
+            throws UnauthorizedException, IOException, ImageFormatException, MandatoryFieldFoundEmptyException {
         if (adminUserName == null && adminPassword == null) {
             throw new UnauthorizedException("Unauthorized access.");
         }
@@ -55,8 +56,7 @@ public class ExpertiseController {
                             .info(info)
                             .url(url)
                             .build(),
-                    bg
-            );
+                    bg);
             return new ExpertisePostRequestResponse(
                     HttpStatus.OK,
                     expertise,
@@ -71,13 +71,13 @@ public class ExpertiseController {
     @PutMapping
     public ExpertisePostRequestResponse putExpertiseUsingData(
             @RequestParam("id") String id,
-            @RequestParam("bg") MultipartFile bg,
-            @RequestParam("name") String name,
-            @RequestParam("info") String info,
-            @RequestParam("url") String url,
+            @RequestParam(value = "bg", required = false) MultipartFile bg,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "info", required = false) String info,
+            @RequestParam(value = "url", required = false) String url,
             @RequestHeader(value = "username", required = false) String adminUserName,
-            @RequestHeader(value = "password", required = false) String adminPassword
-    ) throws UnauthorizedException, ExpertiseNotFoundException, IOException, ImageFormatException {
+            @RequestHeader(value = "password", required = false) String adminPassword)
+            throws UnauthorizedException, ExpertiseNotFoundException, IOException, ImageFormatException {
         if (adminUserName == null && adminPassword == null) {
             throw new UnauthorizedException("Unauthorized access.");
         }
@@ -89,8 +89,7 @@ public class ExpertiseController {
                             .url(url)
                             .build(),
                     bg,
-                    Long.valueOf(id)
-            );
+                    Long.valueOf(id));
             return new ExpertisePostRequestResponse(
                     HttpStatus.OK,
                     expertise,
@@ -105,14 +104,15 @@ public class ExpertiseController {
     public ExpertiseDeleteResponse deleteExpertiseUsingId(
             @RequestParam(name = "id") String id,
             @RequestHeader(value = "username", required = false) String adminUserName,
-            @RequestHeader(value = "password", required = false) String adminPassword
-    ) throws UnauthorizedException, FileNotFoundException, ExpertiseNotFoundException {
+            @RequestHeader(value = "password", required = false) String adminPassword)
+            throws UnauthorizedException, FileNotFoundException, ExpertiseNotFoundException {
         if (adminUserName == null || adminPassword == null) {
             throw new UnauthorizedException("Unauthorized access.");
         }
         if (adminService.verifyAdmin(adminUserName, adminPassword)) {
             Expertise deletedExpertise = service.deleteSponsorById(Long.valueOf(id));
-            return new ExpertiseDeleteResponse(HttpStatus.OK, deletedExpertise, "Expertise deleted successfully!", Calendar.getInstance().getTime().getTime());
+            return new ExpertiseDeleteResponse(HttpStatus.OK, deletedExpertise, "Expertise deleted successfully!",
+                    Calendar.getInstance().getTime().getTime());
         } else {
             throw new UnauthorizedException("The provided admin data was incorrect!");
         }
